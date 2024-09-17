@@ -1,7 +1,7 @@
 package main
 
 import (
-	"io"
+	"flag"
 	"os"
 
 	"github.com/SmartyCaroine/calc-apps/handlers"
@@ -10,12 +10,21 @@ import (
 )
 
 func main() {
-	var (
-		inputs     []string            = os.Args[1:]
-		calculator handlers.Calculator = calc.Addition{}
-		output     io.Writer           = os.Stdout
-	)
-	handler := handlers.NewHandler(calculator, output)
+	var op string
+	flag.StringVar(&op, "op", "+", "one of + - * /")
+	flag.Parse()
 
-	handler.Handle(inputs)
+	handler := handlers.NewHandler(calculators[op], os.Stdout)
+	err := handler.Handle(flag.Args())
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+var calculators = map[string]handlers.Calculator{
+	"+": calc.Addition{},
+	"-": calc.Subtraction{},
+	"/": calc.Division{},
+	"*": calc.Multiplication{},
 }
