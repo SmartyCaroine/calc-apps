@@ -6,6 +6,8 @@ import (
 	"errors"
 	"reflect"
 	"testing"
+
+	"github.com/SmartyCaroine/calc-lib/calc"
 )
 
 func assertEqual(t *testing.T, expected, actual any) {
@@ -27,7 +29,7 @@ func TestTooFewInputs(t *testing.T) {
 	output := &bufio.Writer{}
 	handler := NewHandler(calc.Addition{}, output)
 
-	err := handler.handle(nil)
+	err := handler.Handle(nil)
 
 	assertError(t, errTooFewArguments, err)
 }
@@ -36,11 +38,11 @@ func TestMalformedInput(t *testing.T) {
 	output := &bufio.Writer{}
 	handler := NewHandler(calc.Addition{}, output)
 
-	err := handler.handle([]string{"NaN", "1"})
+	err := handler.Handle([]string{"NaN", "1"})
 
 	assertError(t, errMalformedInput, err)
 
-	err = handler.handle([]string{"1", "NaN"})
+	err = handler.Handle([]string{"1", "NaN"})
 
 	assertError(t, errMalformedInput, err)
 }
@@ -50,7 +52,7 @@ func TestErringWriter(t *testing.T) {
 	output := &ErringWriter{err: smile}
 	handler := NewHandler(calc.Addition{}, output)
 
-	err := handler.handle([]string{"1", "1"})
+	err := handler.Handle([]string{"1", "1"})
 
 	assertError(t, errFailToWrite, err)
 }
@@ -59,7 +61,7 @@ func TestHappyPath(t *testing.T) {
 	output := bytes.Buffer{}
 	handler := *NewHandler(calc.Addition{}, &output)
 
-	err := handler.handle([]string{"1", "1"})
+	err := handler.Handle([]string{"1", "1"})
 
 	assertError(t, nil, err)
 }

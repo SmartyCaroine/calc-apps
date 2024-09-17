@@ -18,7 +18,7 @@ func NewHandler(calculator Calculator, output io.Writer) *Handler {
 	return &Handler{calculator: calculator, output: output}
 }
 
-func (this *Handler) handle(inputs []string) error {
+func (this *Handler) Handle(inputs []string) error {
 	if len(inputs) < 2 {
 		return fmt.Errorf("%w: two arguments required", errTooFewArguments)
 	}
